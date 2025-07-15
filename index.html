@@ -1,20 +1,446 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>InnSync</title>
-<link type="image/png" rel="icon" href="fevicon.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>InnSync – Next-Gen Hotel PMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <style>
-    h1 { font-size : 40px ;
-       color: rgb(247, 160, 134) ;
-       text-align : center ;
-      }
+    html {
+      scroll-behavior: smooth;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s cubic-bezier(.4,0,.2,1), transform 0.9s cubic-bezier(.4,0,.2,1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, #2563eb, #2dd4bf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      animation: gradient-move 3s linear infinite alternate;
+    }
+    @keyframes gradient-move {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    .feature-card {
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      border: none;
+      background: rgba(255,255,255,0.85);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card:hover {
+      transform: scale(1.06) translateY(-6px);
+      box-shadow: 0 1.5rem 2.5rem rgba(37,99,235,0.10), 0 0.5rem 1.5rem rgba(0,0,0,0.08);
+      z-index: 2;
+    }
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, #2dd4bf22 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 1;
+    }
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+    .btn-gradient {
+      background: linear-gradient(90deg, #2563eb, #2dd4bf);
+      color: #fff;
+      border: none;
+      box-shadow: 0 0.5rem 1.5rem rgba(37,99,235,0.10);
+      transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-gradient:after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 100%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+      z-index: 0;
+    }
+    .btn-gradient:hover:after {
+      width: 200%;
+      height: 200%;
+    }
+    .btn-gradient:hover {
+      background: linear-gradient(90deg, #1d4ed8, #14b8a6);
+      color: #fff;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 1rem 2rem rgba(37,99,235,0.13);
+    }
+    .bg-gradient-section {
+      background: linear-gradient(90deg, #eff6ff 0%, #f0fdfa 100%);
+    }
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0);}
+      50% { transform: translateY(-18px);}
+    }
+    .form-control:focus {
+      border-color: #2dd4bf;
+      box-shadow: 0 0 0 0.2rem rgba(45,212,191,.15);
+    }
+    .card-body svg {
+      filter: drop-shadow(0 2px 8px #2dd4bf22);
+      transition: filter 0.3s;
+    }
+    .feature-card:hover .card-body svg {
+      filter: drop-shadow(0 4px 16px #2563eb33);
+    }
+    .section-divider {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #2563eb, #2dd4bf);
+      border-radius: 2px;
+      margin: 0 auto 2rem auto;
+      opacity: 0.7;
+      animation: divider-glow 2s infinite alternate;
+    }
+    @keyframes divider-glow {
+      0% { box-shadow: 0 0 8px #2dd4bf44; }
+      100% { box-shadow: 0 0 24px #2563eb77; }
+    }
+    .form-floating label {
+      color: #2563eb;
+      font-weight: 500;
+    }
+    .footer-glow {
+      background: linear-gradient(90deg, #2563eb11, #2dd4bf11);
+      box-shadow: 0 0 24px #2563eb22;
+    }
+    /* Header Styles */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    .header.scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 4px 20px rgba(37,99,235,0.1);
+    }
+    .nav-link {
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-link:hover {
+      color: #2563eb;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #2563eb, #2dd4bf);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    /* Additional Header & Hero Styles */
+    .hero-section {
+      padding-top: 80px; /* Accounts for fixed header */
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdfa 100%);
+      position: relative;
+    }
+    
+    .hero-pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zM22.344 0L13.858 8.485 15.272 9.9l7.9-7.9h-.828zm5.656 0L19.515 8.485 17.343 10.657l7.9-7.9h2.757zm5.656 0l-6.485 6.485L25.515 8.343l7.9-7.9h-.714zm5.657 0l-6.485 6.485L31.172 8.343 39.07.443h-5.656zm5.657 0l-6.485 6.485L36.828 8.343 44.727.443h-5.656zM12.485 0L7.273 5.212 8.687 6.626 15.8 0h-3.314zm5.656 0L13.9 4.242 12.485 5.657 17.7 0h.44zm5.656 0L20.557 4.242 19.142 5.657 24.357 0h-.56zm5.657 0L26.213 4.242 24.8 5.657 29.613 0h-.814zm5.657 0L31.87 4.242 30.456 5.657 35.27 0h-.97zm5.657 0L37.525 4.242 36.112 5.657 40.925 0h-1.126zm5.657 0L43.182 4.242l-.814.814L47.8 0h-2.313z' fill='%232563eb' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+      opacity: 0.6;
+      pointer-events: none;
+    }
   </style>
-  
+  <script>
+    // Scroll animation for fade-in
+    document.addEventListener('DOMContentLoaded', () => {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    });
+    // Demo form handler
+    function handleDemoForm(e) {
+      e.preventDefault();
+      const data = {
+        name: e.target.name.value,
+        hotel: e.target.hotel.value,
+        email: e.target.email.value,
+        phone: e.target.phone.value
+      };
+      console.log('Demo Form Submission:', data);
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Submit';
+        e.target.reset();
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success mt-3';
+        alertDiv.innerText = 'Thank you! We have received your request.';
+        e.target.parentNode.insertBefore(alertDiv, e.target.nextSibling);
+        setTimeout(() => alertDiv.remove(), 3500);
+      }, 1200);
+    }
+    // Header scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('.header');
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
 </head>
-<body>
+<body class="bg-light text-dark">
+  <!-- Header -->
+  <header class="header py-2">
+    <div class="container">
+      <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand fw-bold gradient-text" href="#">InnSync</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link mx-2" href="#home">Home</a></li>
+            <li class="nav-item"><a class="nav-link mx-2" href="#features">Features</a></li>
+            <li class="nav-item"><a class="nav-link mx-2" href="#demo">Demo</a></li>
+            <li class="nav-item"><a class="btn btn-gradient px-4 py-2 ms-2" href="#contact">Contact Us</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
 
+  <!-- Hero Section -->
+  <section class="hero-section min-vh-100 d-flex flex-column justify-content-center align-items-center text-center px-3 py-5 position-relative overflow-hidden">
+    <div class="hero-pattern"></div>
+    <div class="container fade-in">
+      <h1 class="display-4 fw-bold mb-3 gradient-text floating">
+        Prevent Revenue Leakage. <br/>Unlock True Hotel Potential.
+      </h1>
+      <div class="section-divider"></div>
+      <p class="lead mb-4 text-secondary">
+        InnSync is the next-gen Property Management System (PMS) that ensures every walk-in booking is logged, using real-time room occupancy detection.
+      </p>
+      <a href="#demo" class="btn btn-gradient btn-lg px-5 py-3 fw-semibold shadow mb-4 position-relative z-2">
+        Book a Free Demo
+      </a>
+      <div class="mt-4 d-flex justify-content-center">
+        <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_4kx2q32n.json" background="transparent" speed="1" style="width: 320px; height: 220px;" loop autoplay class="floating"></lottie-player>
+      </div>
+      <img src="https://www.transparenttextures.com/patterns/cubes.png" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.06;pointer-events:none;z-index:0;">
+    </div>
+  </section>
 
-  <h1>InnSync loading soon...</h1>
+  <!-- Problem Section -->
+  <section class="py-5 bg-light fade-in">
+    <div class="container text-center">
+      <h2 class="h1 fw-bold mb-3 text-primary">The Problem</h2>
+      <div class="section-divider"></div>
+      <p class="lead text-secondary mb-4">
+        Many hotels lose revenue because staff forget or intentionally skip entering walk-in bookings into the PMS. This leads to untracked occupancy, inaccurate reports, and lost profits.
+      </p>
+      <div class="row justify-content-center g-4">
+        <div class="col-md-5">
+          <div class="card shadow-sm h-100 border-0 feature-card">
+            <div class="card-body">
+              <span class="badge bg-danger bg-opacity-10 text-danger mb-2 fw-semibold fs-6 px-3 py-2">Revenue Leakage</span>
+              <p class="text-secondary fs-5">Unlogged walk-ins mean lost income and inaccurate financials.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="card shadow-sm h-100 border-0 feature-card">
+            <div class="card-body">
+              <span class="badge bg-warning bg-opacity-10 text-warning mb-2 fw-semibold fs-6 px-3 py-2">Manual Errors</span>
+              <p class="text-secondary fs-5">Relying on staff to log every booking is unreliable and error-prone.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- Solution Section -->
+  <section class="py-5 bg-white fade-in">
+    <div class="container text-center">
+      <h2 class="h1 fw-bold mb-3 text-info">How InnSync Works</h2>
+      <div class="section-divider"></div>
+      <p class="lead text-secondary mb-5">
+        InnSync uses smart sensors to detect real-time room occupancy. If a room is occupied but not logged in the PMS, InnSync instantly flags it—ensuring every booking is accounted for.
+      </p>
+      <div class="row justify-content-center g-4">
+        <div class="col-md-4">
+          <div class="d-flex flex-column align-items-center">
+            <div class="bg-primary bg-opacity-10 rounded-circle p-3 mb-2 floating">
+              <svg class="text-primary" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+            </div>
+            <span class="fw-semibold fs-5">Sensors Detect Occupancy</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex flex-column align-items-center">
+            <div class="bg-info bg-opacity-10 rounded-circle p-3 mb-2 floating" style="animation-delay:.5s;">
+              <svg class="text-info" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2l4-4"></path></svg>
+            </div>
+            <span class="fw-semibold fs-5">Cross-checks with PMS</span>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex flex-column align-items-center">
+            <div class="bg-warning bg-opacity-10 rounded-circle p-3 mb-2 floating" style="animation-delay:1s;">
+              <svg class="text-warning" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01"></path></svg>
+            </div>
+            <span class="fw-semibold fs-5">Flags Unlogged Bookings</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5 bg-light fade-in">
+    <div class="container">
+      <h2 class="h1 fw-bold text-center mb-5 text-primary">Core Features</h2>
+      <div class="section-divider"></div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card feature-card h-100 text-center shadow-sm border-0">
+            <div class="card-body">
+              <div class="mb-3">
+                <svg class="text-primary" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"></path></svg>
+              </div>
+              <h3 class="fw-semibold h5 mb-2">Real-Time Room Monitoring</h3>
+              <p class="text-secondary">Get instant updates on room occupancy with smart IoT sensors.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card h-100 text-center shadow-sm border-0">
+            <div class="card-body">
+              <div class="mb-3">
+                <svg class="text-info" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+              </div>
+              <h3 class="fw-semibold h5 mb-2">Automated Booking Flagging</h3>
+              <p class="text-secondary">Never miss a walk-in booking—InnSync flags any unlogged occupancy.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card feature-card h-100 text-center shadow-sm border-0">
+            <div class="card-body">
+              <div class="mb-3">
+                <svg class="text-warning" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"></path></svg>
+              </div>
+              <h3 class="fw-semibold h5 mb-2">Insightful Analytics</h3>
+              <p class="text-secondary">Visualize occupancy trends and revenue insights with easy dashboards.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA + Demo Form Section -->
+  <section id="demo" class="py-5 bg-gradient-section fade-in">
+    <div class="container text-center">
+      <h2 class="h1 fw-bold mb-3 text-primary">Book a Free Demo</h2>
+      <div class="section-divider"></div>
+      <p class="mb-4 text-secondary">Ready to see InnSync in action? Fill out the form below and our team will get in touch!</p>
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <form class="bg-white rounded-4 shadow p-4 text-start" onsubmit="handleDemoForm(event)">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input class="form-control" type="text" id="name" name="name" placeholder="Your Name" required>
+                  <label for="name">Name</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input class="form-control" type="text" id="hotel" name="hotel" placeholder="Hotel Name" required>
+                  <label for="hotel">Hotel Name</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input class="form-control" type="email" id="email" name="email" placeholder="Email" required>
+                  <label for="email">Email</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input class="form-control" type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+                  <label for="phone">Phone Number</label>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-gradient btn-lg w-100 mt-4 fw-bold shadow position-relative overflow-hidden">
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white border-top py-4 mt-5 text-center text-secondary text-sm footer-glow position-relative">
+    <div class="container">
+      <span class="fw-semibold">&copy; 2025 InnSync.</span> All rights reserved. | Built for college project
+      <div style="position:absolute;left:0;bottom:0;width:100%;height:6px;background:linear-gradient(90deg,#2563eb,#2dd4bf);opacity:.18;"></div>
+    </div>
+  </footer>
 </body>
 </html>
